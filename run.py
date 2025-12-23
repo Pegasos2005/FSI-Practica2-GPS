@@ -4,14 +4,11 @@ import time
 def bfs_instrumented(problem):
     return search.instrumented_graph_search(problem, search.FIFOQueue())
 
-
 def dfs_instrumented(problem):
     return search.instrumented_graph_search(problem, search.Stack())
 
-
 def bnb_instrumented(problem):
     return search.branch_and_bound_graph_search(problem)
-
 
 def bnb_subestimation_instrumented(problem):
     return search.branch_and_bound_subestimation_graph_search(problem)
