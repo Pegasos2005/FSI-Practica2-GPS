@@ -6,7 +6,7 @@ import operator
 import os.path
 import heapq
 from filecmp import cmp
-from functools import reduce # Necesario en Python
+from functools import reduce
 
 import abstract
 
@@ -351,9 +351,6 @@ def normalize(numbers, total=1.0):
     k = total / sum(numbers)
     return [k * n for n in numbers]
 
-## OK, the following are not as widely useful utilities as some of the other
-## functions here, but they do show up wherever we have 2D grids: Wumpus and
-## Vacuum worlds, TicTacToe and Checkers, and markov decision Processes.
 
 orientations = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
@@ -555,20 +552,21 @@ class FIFOQueue(Queue):
         return e
 
 #=========================================================================
-#                                   AÑADIDO
+#                    IMPLEMENTACIÓN COLA DE PRIORIDAD
 #=========================================================================
+
 class PriorityQueue(Queue):
     """Una cola de prioridad mínima optimizada para la búsqueda."""
     def __init__(self, f=lambda x: x):
         self.heap = []
         self.f = f
-        self.count = 0 # Contador para desempatar sin comparar Nodos
+        self.count = 0
 
     def append(self, item):
         # Guardamos (prioridad, contador, item)
         # El contador asegura que si dos nodos tienen la misma prioridad,
         # salga primero el que entró antes (FIFO en empates) y evita errores de comparación de Nodos.
-        heapq.heappush(self.heap, (self.f(item), self.count, item)) # (prioridad, orden d llegada, nodo)
+        heapq.heappush(self.heap, (self.f(item), self.count, item)) # (prioridad, orden de llegada, nodo)
         self.count += 1
 
     def pop(self):
@@ -579,11 +577,7 @@ class PriorityQueue(Queue):
 
     def __len__(self):
         return len(self.heap)
-#=========================================================================
 
-
-## Fig: The idea is we can define things like Fig[3,10] later.
-## Alas, it is Fig[3,10] not Fig[3.10], because that would be the same as Fig[3.1]
 Fig = {}
 
 

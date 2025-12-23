@@ -1,29 +1,15 @@
+from utils import *
+
 """Search (Chapters 3-4)
 
 The way to use this code is to subclass Problem to create a class of problems,
 then create problem instances and solve them with calls to the various search
 functions."""
 
-
-from utils import *
-
-
-# ______________________________________________________________________________
-
-# ______________________________________________________________________________
-# EXTENSIÓN PARA EL PROYECTO (Parte 1, 2 y 3)
-# ______________________________________________________________________________
-
-
-
-# 1. PriorityQueue lo hace todo (utils.py) añadido por nst
-
-# 2. Motor de Búsqueda Instrumentado (Parte 3)
-# Esta función es análoga a graph_search pero cuenta nodos generados y visitados.
+# mala heurística
 def brute_force_search(problem, fringe):
     """
-    Búsqueda por Fuerza Bruta: Explora TODO sin recordar 
-    por dónde ha pasado (sin lista 'closed').
+    Búsqueda por Fuerza Bruta: explora todo sin tener en cuenta los visitados.
     """
     fringe.append(Node(problem.initial))
     generated_nodes = 1
@@ -32,12 +18,8 @@ def brute_force_search(problem, fringe):
     while fringe:
         node = fringe.pop()
         visited_nodes += 1
-
         if problem.goal_test(node.state):
             return node, generated_nodes, visited_nodes
-
-        # ¡Aquí está la diferencia! No preguntamos si ya visitamos la ciudad.
-        # Simplemente expandimos todo lo que vemos.
         successors = node.expand(problem)
         generated_nodes += len(successors)
         fringe.extend(successors)
@@ -46,15 +28,13 @@ def brute_force_search(problem, fringe):
 
 def instrumented_graph_search(problem, fringe):
     """
-    Realiza una búsqueda en grafo devolviendo estadísticas.
-    Retorna: (nodo_solución, nodos_generados, nodos_visitados)
+    Realiza una búsqueda en grafo y devuelve:
+    (nodo_solución, nodos_generados, nodos_visitados)
     """
     visitados = {}
 
-    # Nodo inicial
     start_node = Node(problem.initial)
     fringe.append(start_node)
-
     generated_nodes = 1
     visited_nodes = 0
 
@@ -62,21 +42,16 @@ def instrumented_graph_search(problem, fringe):
         node = fringe.pop()
         visited_nodes += 1
 
-        if problem.goal_test(node.state): # Observa si ya llegó al destino
+        if problem.goal_test(node.state): # Evalúa si está en la meta
             return node, generated_nodes, visited_nodes
 
         if node.state not in visitados:
             visitados[node.state] = True
-
-            # Expandir sucesores
             successors = node.expand(problem)
-            generated_nodes += len(successors) # Sumamos los hijos creados
-
+            generated_nodes += len(successors)
             fringe.extend(successors)
 
     return None, generated_nodes, visited_nodes
-
-# 3. Estrategias de Búsqueda (Parte 1 y 2)
 
 def branch_and_bound_graph_search(problem):
     """
@@ -90,7 +65,6 @@ def branch_and_bound_subestimation_graph_search(problem):
     Parte 2: Ramificación y Acotación con Subestimación (A*).
     Estrategia: Explorar el nodo con menor f(n) = g(n) + h(n).
     """
-    # La heurística h(n) ya la provee la clase GPSProblem usando distancia euclídea
     return instrumented_graph_search(problem, PriorityQueue(f=lambda n: n.path_cost + problem.h(n)))
 
 
@@ -346,6 +320,3 @@ class GPSProblem(Problem):
             return int(distance(locs[node.state], locs[self.goal]))
         else:
             return infinity
-
-
-# UndirectedGraph como furula?
